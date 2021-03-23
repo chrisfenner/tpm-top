@@ -20,6 +20,7 @@ func main() {
 		}
 	}()
 
+	platform.NVOff()
 	platform.PowerOff()
 	platform.PowerOn()
 	platform.NVOn()

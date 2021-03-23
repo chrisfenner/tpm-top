@@ -10,6 +10,7 @@ const (
 	powerOn    uint32 = 1
 	powerOff   uint32 = 2
 	nvOn       uint32 = 11
+	nvOff      uint32 = 12
 	sessionEnd uint32 = 20
 )
 
@@ -65,6 +66,11 @@ func (p TcpPlatform) PowerOff() error {
 // NVOn enables NV access.
 func (p TcpPlatform) NVOn() error {
 	return p.sendCmd(nvOn)
+}
+
+// NVOff disables NV access.
+func (p TcpPlatform) NVOff() error {
+	return p.sendCmd(nvOff)
 }
 
 // Close closes the connection to the running platform.

@@ -1,26 +1,43 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"github.com/chrisfenner/tpm-top/internal/opener"
-	"github.com/google/go-tpm/tpm2"
+	ui "github.com/gizak/termui/v3"
+	"os"
+	"time"
 )
 
 func main() {
 	conf := opener.TcpConfig{
 		Address: "127.0.0.1:2321",
 	}
-	tpm, err := opener.OpenTcpTpm(&conf)
-	if err != nil {
-		fmt.Printf("Error opening TPM simulator: %v\n", err)
-		return
+
+	if err := ui.Init(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error initializing termui: %v\n", err)
 	}
-	defer tpm.Close()
-	mfr, err := tpm2.GetManufacturer(tpm)
-	if err != nil {
-		fmt.Printf("Error calling GetManufacturer: %v\n", err)
-		return
+	defer ui.Close()
+
+	pcrView := NewPcrView()
+	go func() {
+		for true {
+			width, height := ui.TerminalDimensions()
+			pcrView.SetRect(0, 0, width, height)
+			tpm, err := opener.OpenTcpTpm(&conf)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error opening TPM simulator: %v\n", err)
+				return
+			}
+			pcrView.Refresh(tpm)
+			tpm.Close()
+			ui.Render(pcrView)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	for e := range ui.PollEvents() {
+		if e.Type == ui.KeyboardEvent {
+			break
+		}
 	}
-	fmt.Printf("Manufacturer string: %s\n", hex.EncodeToString(mfr))
 }
