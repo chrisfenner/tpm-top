@@ -49,7 +49,7 @@ go build cmd/tpm-top
 ## Starting the simulator
 tpm-top currently only connects to a running TCP simulator, even if there is a
 perfectly good local TPM on the system.
-* Clone [the Microsoft reference implementation](https://github.com/microsoft/ms-tpm-20-ref)).
+* Clone [the Microsoft reference implementation](https://github.com/microsoft/ms-tpm-20-ref).
 * Build the simulator using the instructions from that repository.
 * Start the simulator from the command-line.
 * Use `sim-start` and `tpm-tool startup` to power-on the simulated TPM.
