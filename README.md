@@ -43,7 +43,8 @@ go build cmd/tpm-top
     * `sim-start`
     * `tpm-tool startup`
 * `extend <index> <file>`
-  * Extends the contents of `<file>` into all PCRs. `<file>` must be 1KB or smaller.
+  * Extends the contents of `<file>` into PCR `<index>` in all active PCR banks.
+  * `<file>` must be 1KB or smaller.
 
 ## Starting the simulator
 tpm-top currently only connects to a running TCP simulator, even if there is a
