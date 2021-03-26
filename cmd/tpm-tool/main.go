@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/chrisfenner/tpm-top/internal/opener"
 	"github.com/chrisfenner/tpm-top/internal/pcr-allocate"
+	"github.com/chrisfenner/tpm-top/internal/rc"
 	"github.com/google/go-tpm/tpm2"
 	"github.com/google/go-tpm/tpmutil"
 	"io"
@@ -19,6 +20,12 @@ var funcMap = map[string]toolFunc{
 	"shutdown":  shutdown,
 	"pcr-banks": pcrBanks,
 	"extend":    extend,
+}
+
+type toolFuncNoTpm func([]string) int
+
+var funcMapNoTpm = map[string]toolFuncNoTpm{
+	"explain":   explain,
 }
 
 func startup(tpm io.ReadWriter, args []string) int {
@@ -133,10 +140,32 @@ func extend(tpm io.ReadWriter, args []string) int {
 	return 0
 }
 
+func explain(args []string) int {
+	if len(args) != 1 {
+		fmt.Fprintf(os.Stderr, "'explain' command expects 1 argument: an error code\n")
+		return 1
+	}
+	code, err := strconv.ParseInt(args[0], 0, 32)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "could not parse error code: %v\n", err)
+		return 1
+	}
+	err = rc.MakeError(int(code))
+	if err == nil {
+		fmt.Printf("RC_SUCCESS! 😎\n")
+	} else {
+		fmt.Printf("%s\n", err)
+	}
+	return 0
+}
+
 func usage() {
 	fmt.Printf("tpm-tool usage: tpm-tool (function) [(arguments)]\n")
 	fmt.Printf("Supported functions:\n")
 	for name, _ := range funcMap {
+		fmt.Printf("  %s\n", name)
+	}
+	for name, _ := range funcMapNoTpm {
 		fmt.Printf("  %s\n", name)
 	}
 }
@@ -148,6 +177,10 @@ func mainWithExitCode() int {
 		return 1
 	}
 	cmd := os.Args[1]
+	funNoTpm, ok := funcMapNoTpm[cmd]
+	if ok {
+		return funNoTpm(os.Args[2:])
+	}
 	fun, ok := funcMap[cmd]
 	if !ok {
 		fmt.Fprintf(os.Stderr, "Unsupported command '%s'\n", cmd)
