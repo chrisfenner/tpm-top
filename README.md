@@ -45,6 +45,8 @@ go build cmd/tpm-top
 * `extend <index> <file>`
   * Extends the contents of `<file>` into PCR `<index>` in all active PCR banks.
   * `<file>` must be 1KB or smaller.
+* `explain`
+  * Formats a TPM 2.0 error code and prints out the explanation.
 
 ## Starting the simulator
 tpm-top currently only connects to a running TCP simulator, even if there is a
