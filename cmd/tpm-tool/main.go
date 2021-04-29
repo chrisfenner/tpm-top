@@ -5,9 +5,11 @@ import (
 	"github.com/chrisfenner/tpm-top/internal/opener"
 	"github.com/chrisfenner/tpm-top/internal/pcr-allocate"
 	"github.com/chrisfenner/tpm-top/internal/rc"
+	"github.com/google/go-attestation/attest"
 	"github.com/google/go-tpm/tpm2"
 	"github.com/google/go-tpm/tpmutil"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -26,6 +28,7 @@ type toolFuncNoTpm func([]string) int
 
 var funcMapNoTpm = map[string]toolFuncNoTpm{
 	"explain":   explain,
+	"dump": dump,
 }
 
 func startup(tpm io.ReadWriter, args []string) int {
@@ -157,6 +160,33 @@ func explain(args []string) int {
 		fmt.Printf("%s\n", err)
 	}
 	return 0
+}
+
+func dump(args []string) int {
+	if len(args) != 1 {
+		fmt.Fprintf(os.Stderr, "'dump' command expects 1 argument: path to a TCG log\n")
+		return 1
+	}
+	log, err := ioutil.ReadFile(args[0])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "could not read TCG log file: %v", err)
+		return 1
+	}
+	parsed, err := attest.ParseEventLog(log)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "could not parse TCG log file: %v", err)
+		return 1
+	}
+	fmt.Printf("Parsed log supports the following algorithms:\n%v\n", parsed.Algs)
+	for _, alg := range parsed.Algs {
+		events := parsed.Events(alg)
+		fmt.Printf("Found %d events for %v:\n", len(events), alg)
+		for i, event := range events {
+			fmt.Printf("%d:\n%+v\n", i, event)
+		}
+	}
+	return 0
+
 }
 
 func usage() {
