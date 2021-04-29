@@ -4,5 +4,6 @@ go 1.14
 
 require (
 	github.com/gizak/termui/v3 v3.1.0
+	github.com/google/go-attestation v0.3.2
 	github.com/google/go-tpm v0.3.2
 )
