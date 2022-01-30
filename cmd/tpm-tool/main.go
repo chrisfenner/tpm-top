@@ -2,17 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/chrisfenner/tpm-top/internal/opener"
-	"github.com/chrisfenner/tpm-top/internal/pcr-allocate"
-	"github.com/chrisfenner/tpm-top/internal/rc"
-	"github.com/google/go-attestation/attest"
-	"github.com/google/go-tpm/tpm2"
-	"github.com/google/go-tpm/tpmutil"
 	"io"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/chrisfenner/tpm-top/pkg/opener"
+	pcrAllocate "github.com/chrisfenner/tpm-top/pkg/pcr-allocate"
+	"github.com/chrisfenner/tpm-top/pkg/rc"
+	"github.com/google/go-attestation/attest"
+	"github.com/google/go-tpm/tpm2"
+	"github.com/google/go-tpm/tpmutil"
 )
 
 type toolFunc func(io.ReadWriter, []string) int
@@ -27,8 +28,8 @@ var funcMap = map[string]toolFunc{
 type toolFuncNoTpm func([]string) int
 
 var funcMapNoTpm = map[string]toolFuncNoTpm{
-	"explain":   explain,
-	"dump": dump,
+	"explain": explain,
+	"dump":    dump,
 }
 
 func startup(tpm io.ReadWriter, args []string) int {

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/chrisfenner/tpm-top/internal/platform"
+
+	"github.com/chrisfenner/tpm-top/pkg/platform"
 )
 
 func main() {

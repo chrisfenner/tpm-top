@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/chrisfenner/tpm-top/internal/pcrs"
+	"io"
+
+	"github.com/chrisfenner/tpm-top/pkg/pcrs"
 	"github.com/google/go-tpm/tpm2"
 	"github.com/google/go-tpm/tpmutil"
-	"io"
 )
 
 const (

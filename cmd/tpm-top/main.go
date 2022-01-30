@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/chrisfenner/tpm-top/internal/opener"
-	ui "github.com/gizak/termui/v3"
 	"os"
 	"time"
+
+	"github.com/chrisfenner/tpm-top/pkg/opener"
+	ui "github.com/gizak/termui/v3"
 )
 
 func main() {

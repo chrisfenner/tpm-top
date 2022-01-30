@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/chrisfenner/tpm-top/internal/pcrs"
-	ui "github.com/gizak/termui/v3"
-	"github.com/google/go-tpm/tpm2"
 	"image"
 	"io"
+
+	"github.com/chrisfenner/tpm-top/pkg/pcrs"
+	ui "github.com/gizak/termui/v3"
+	"github.com/google/go-tpm/tpm2"
 )
 
 var (
